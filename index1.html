@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CareerVerse – Career Guidance</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:#0f172a;
+  color:#e5e7eb;
+}
+header{
+  text-align:center;
+  padding:25px;
+  background:linear-gradient(120deg,#6366f1,#22d3ee);
+}
+section{ padding:20px; }
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+button{
+  padding:10px 15px;
+  margin:6px;
+  background:#6366f1;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+button:hover{ background:#4f46e5; }
+input{
+  width:100%;
+  padding:10px;
+  border-radius:6px;
+  border:none;
+}
+.career{
+  padding:10px;
+  border-bottom:1px solid #334155;
+  cursor:pointer;
+}
+.career:hover{ background:#334155; }
+.hidden{ display:none; }
+a{ color:#38bdf8; }
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>CareerVerse</h1>
+<p>Explore Careers, Skills & Passions</p>
+</header>
+
+<section class="card" id="profile">
+<h2>Create Profile</h2>
+<input id="studentName" placeholder="Enter your name">
+<p>Select your interest area:</p>
+<button onclick="selectInterest('government')">Government</button>
+<button onclick="selectInterest('technology')">Technology</button>
+<button onclick="selectInterest('medical')">Medical</button>
+<button onclick="selectInterest('business')">Business</button>
+<button onclick="selectInterest('education')">Education</button>
+<button onclick="selectInterest('science')">Science</button>
+<button onclick="selectInterest('creative')">Creative</button>
+</section>
+
+<section class="card hidden" id="careerList">
+<h2 id="welcomeText"></h2>
+<input id="search" placeholder="Search career..." onkeyup="searchCareer()">
+<div id="careers"></div>
+<button onclick="backToProfile()">← Back</button>
+</section>
+
+<section class="card hidden" id="details">
+<h2 id="careerTitle"></h2>
+<p id="careerDesc"></p>
+<div id="links"></div>
+<button onclick="backToList()">← Back</button>
+</section>
+
+<script>
+const data = {
+
+government:[
+{ name:"IAS Officer", desc:"Top administrative role in India.",
+links:[["UPSC","https://www.upsc.gov.in"],["YouTube","https://youtube.com"]] },
+{ name:"IPS Officer", desc:"Police leadership role.",
+links:[["UPSC","https://www.upsc.gov.in"]] },
+{ name:"IFS Officer", desc:"Foreign diplomacy services.",
+links:[["UPSC","https://www.upsc.gov.in"]] },
+{ name:"Indian Army Officer", desc:"Military leadership career.",
+links:[["Indian Army","https://joinindianarmy.nic.in"]] },
+{ name:"Indian Navy Officer", desc:"Naval defense services.",
+links:[["Indian Navy","https://joinindiannavy.gov.in"]] },
+{ name:"Indian Air Force Officer", desc:"Aviation defense career.",
+links:[["IAF","https://indianairforce.nic.in"]] },
+{ name:"SSC Officer", desc:"Central government jobs.",
+links:[["SSC","https://ssc.nic.in"]] }
+],
+
+technology:[
+{ name:"Software Engineer", desc:"Develops software systems.",
+links:[["Coursera","https://coursera.org"]] },
+{ name:"Web Developer", desc:"Builds websites.",
+links:[["YouTube","https://youtube.com"]] },
+{ name:"App Developer", desc:"Creates mobile apps.",
+links:[["Udemy","https://udemy.com"]] },
+{ name:"Data Scientist", desc:"Analyzes data.",
+links:[["Coursera","https://coursera.org"]] },
+{ name:"AI Engineer", desc:"Works on AI systems.",
+links:[["YouTube","https://youtube.com"]] },
+{ name:"Cyber Security Analyst", desc:"Protects systems.",
+links:[["Google","https://google.com"]] },
+{ name:"Cloud Engineer", desc:"Manages cloud platforms.",
+links:[["AWS","https://aws.amazon.com"]] },
+{ name:"Game Developer", desc:"Designs games.",
+links:[["Unity","https://unity.com"]] }
+],
+
+medical:[
+{ name:"Doctor", desc:"Treats patients.",
+links:[["Medical Career","https://google.com"]] },
+{ name:"Nurse", desc:"Healthcare support.",
+links:[["Nursing","https://google.com"]] },
+{ name:"Pharmacist", desc:"Medicine expert.",
+links:[["Pharmacy","https://google.com"]] },
+{ name:"Physiotherapist", desc:"Rehabilitation specialist.",
+links:[["Physio","https://google.com"]] },
+{ name:"Nutritionist", desc:"Diet planning.",
+links:[["Nutrition","https://google.com"]] }
+],
+
+business:[
+{ name:"Chartered Accountant", desc:"Accounting professional.",
+links:[["ICAI","https://icai.org"]] },
+{ name:"Business Analyst", desc:"Business problem solver.",
+links:[["YouTube","https://youtube.com"]] },
+{ name:"Entrepreneur", desc:"Starts own business.",
+links:[["Startup India","https://startupindia.gov.in"]] },
+{ name:"Marketing Manager", desc:"Promotes products.",
+links:[["Marketing","https://google.com"]] },
+{ name:"HR Manager", desc:"Manages people.",
+links:[["HR","https://google.com"]] }
+],
+
+education:[
+{ name:"Teacher", desc:"Educates students.",
+links:[["Teaching","https://google.com"]] },
+{ name:"Professor", desc:"Higher education.",
+links:[["UGC","https://ugc.ac.in"]] },
+{ name:"Online Educator", desc:"Teaches online.",
+links:[["YouTube","https://youtube.com"]] }
+],
+
+science:[
+{ name:"Research Scientist", desc:"Conducts research.",
+links:[["Research","https://google.com"]] },
+{ name:"Space Scientist", desc:"Space exploration.",
+links:[["ISRO","https://isro.gov.in"]] },
+{ name:"Environmental Scientist", desc:"Studies environment.",
+links:[["Environment","https://google.com"]] }
+],
+
+creative:[
+{ name:"UI/UX Designer", desc:"Designs user experiences.",
+links:[["Behance","https://behance.net"]] },
+{ name:"Graphic Designer", desc:"Visual design.",
+links:[["Canva","https://canva.com"]] },
+{ name:"Photographer", desc:"Photography as hobby/career.",
+links:[["Instagram","https://instagram.com"]] },
+{ name:"Videographer", desc:"Video creation.",
+links:[["YouTube","https://youtube.com"]] },
+{ name:"Content Creator", desc:"Creates digital content.",
+links:[["YouTube","https://youtube.com"]] },
+{ name:"Music Producer", desc:"Music creation.",
+links:[["SoundCloud","https://soundcloud.com"]] },
+{ name:"Film Maker", desc:"Movie creation.",
+links:[["Film","https://google.com"]] },
+{ name:"Animator", desc:"Animation design.",
+links:[["Blender","https://blender.org"]] },
+{ name:"Game Artist", desc:"Game visuals.",
+links:[["ArtStation","https://artstation.com"]] },
+{ name:"Fashion Designer", desc:"Fashion creation.",
+links:[["Fashion","https://google.com"]] },
+{ name:"Interior Designer", desc:"Space design.",
+links:[["Interior","https://google.com"]] }
+]
+
+};
+
+let currentInterest="";
+
+function selectInterest(i){
+  currentInterest=i;
+  document.getElementById("profile").classList.add("hidden");
+  document.getElementById("careerList").classList.remove("hidden");
+  document.getElementById("welcomeText").innerText="Explore "+i.toUpperCase()+" Careers";
+  loadCareers();
+}
+
+function loadCareers(){
+  let c=document.getElementById("careers");
+  c.innerHTML="";
+  data[currentInterest].forEach(x=>{
+    let d=document.createElement("div");
+    d.className="career";
+    d.innerText=x.name;
+    d.onclick=()=>showDetails(x);
+    c.appendChild(d);
+  });
+}
+
+function showDetails(x){
+  document.getElementById("careerList").classList.add("hidden");
+  document.getElementById("details").classList.remove("hidden");
+  document.getElementById("careerTitle").innerText=x.name;
+  document.getElementById("careerDesc").innerText=x.desc;
+  let h="<ul>";
+  x.links.forEach(l=>h+=`<li><a href="${l[1]}" target="_blank">${l[0]}</a></li>`);
+  h+="</ul>";
+  document.getElementById("links").innerHTML=h;
+}
+
+function backToList(){
+  document.getElementById("details").classList.add("hidden");
+  document.getElementById("careerList").classList.remove("hidden");
+}
+
+function backToProfile(){
+  document.getElementById("careerList").classList.add("hidden");
+  document.getElementById("profile").classList.remove("hidden");
+}
+
+function searchCareer(){
+  let v=document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".career").forEach(c=>{
+    c.style.display=c.innerText.toLowerCase().includes(v)?"block":"none";
+  });
+}
+</script>
+
+</body>
+</html>
+
+
